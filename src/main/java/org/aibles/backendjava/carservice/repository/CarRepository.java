@@ -1,5 +1,6 @@
 package org.aibles.backendjava.carservice.repository;
 
+import org.aibles.backendjava.carservice.dto.CarDto;
 import org.aibles.backendjava.carservice.model.Car;
 import org.springframework.data.jpa.repository.JpaRepository;
 
