@@ -1,6 +1,8 @@
 package org.aibles.backendjava.carservice.service.iml;
 
 
+import org.aibles.backendjava.carservice.Mapper.CarMapper;
+import org.aibles.backendjava.carservice.dto.CarDto;
 import org.aibles.backendjava.carservice.model.Car;
 import org.aibles.backendjava.carservice.repository.CarRepository;
 import org.aibles.backendjava.carservice.service.CarService;
@@ -13,21 +15,25 @@ import java.util.List;
 public class CarServiceIml implements CarService {
 
     private final CarRepository carRepository;
+    private final CarMapper carMapper;
 
     @Autowired
-    public CarServiceIml(CarRepository carRepository) {
+    public CarServiceIml(CarRepository carRepository, CarMapper carMapper) {
         this.carRepository = carRepository;
+        this.carMapper = carMapper;
     }
 
 
     @Override
-    public Car createCar(Car car) {
-        return carRepository.save(car);
+    public CarDto createCar(CarDto carDto) {
+        Car car = carMapper.convertToEntity(carDto);
+        return carMapper.convertToDto(carRepository.save(car));
     }
 
     @Override
-    public Car updateCar(int carId, Car carReq) {
-        return carRepository.findById(carId)
+    public CarDto updateCar(int carId, CarDto carDto) {
+        Car carReq = convertToEntity(carDto);
+        Car result = carRepository.findById(carId)
                 .map(car -> {
                     car.setName(carReq.getName());
                     car.setColor(carReq.getColor());
@@ -35,6 +41,7 @@ public class CarServiceIml implements CarService {
                 })
                 .map(carRepository::save)
                 .orElse(null);
+        return convertToDTO(result);
     }
 
     @Override
@@ -50,5 +57,23 @@ public class CarServiceIml implements CarService {
     @Override
     public List<Car> listCar() {
         return carRepository.findAll();
+    }
+
+    private Car convertToEntity(CarDto carDto) {
+        Car car = new Car();
+        car.setId(carDto.getId());
+        car.setName(carDto.getName());
+        car.setColor(carDto.getColor());
+
+        return car;
+    }
+
+    private CarDto convertToDTO(Car car) {
+        CarDto carDto = new CarDto();
+        carDto.setId(car.getId());
+        carDto.setName(car.getName());
+        carDto.setColor(car.getColor());
+
+        return carDto;
     }
 }

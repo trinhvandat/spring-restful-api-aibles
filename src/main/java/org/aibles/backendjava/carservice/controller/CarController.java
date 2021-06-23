@@ -1,5 +1,6 @@
 package org.aibles.backendjava.carservice.controller;
 
+import org.aibles.backendjava.carservice.dto.CarDto;
 import org.aibles.backendjava.carservice.model.Car;
 import org.aibles.backendjava.carservice.service.CarService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,15 +22,15 @@ public class CarController {
     }
 
     @PostMapping
-    public ResponseEntity<Car> createCar(@RequestBody Car car){
-        final Car createdCar = carService.createCar(car);
+    public ResponseEntity<CarDto> createCar(@RequestBody CarDto carDto){
+        final CarDto createdCar = carService.createCar(carDto);
         return new ResponseEntity<>(createdCar, HttpStatus.CREATED);
     }
 
     @PutMapping("/{car_id}")
-    public ResponseEntity<Car> updateCar(@PathVariable("car_id") int carId,
-                                         @RequestBody Car car){
-        final Car updatedCar = carService.updateCar(carId, car);
+    public ResponseEntity<CarDto> updateCar(@PathVariable("car_id") int carId,
+                                         @RequestBody CarDto carDto){
+        final CarDto updatedCar = carService.updateCar(carId, carDto);
         if (updatedCar == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
