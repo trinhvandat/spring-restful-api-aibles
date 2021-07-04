@@ -1,17 +1,18 @@
 package org.aibles.backendjava.carservice.service;
 
-import org.aibles.backendjava.carservice.dto.CarDto;
 import org.aibles.backendjava.carservice.model.Car;
 
 import java.util.List;
 
 public interface CarService {
 
-    CarDto createCar(CarDto carDto);
+    Car createCar(Car carDto);
 
-    CarDto updateCar(int carId, CarDto carDto);
+    Car updateCar(int carId, Car carReq);
 
-    Car deleteCar(int carId);
+    void deleteCar(int carId);
 
     List<Car> listCar();
+
+    Car getCarById(int carId);
 }

@@ -22,37 +22,33 @@ public class CarController {
     }
 
     @PostMapping
-    public ResponseEntity<CarDto> createCar(@RequestBody CarDto carDto){
-        final CarDto createdCar = carService.createCar(carDto);
+    public ResponseEntity<Car> createCar(@RequestBody Car carReq){
+        final Car createdCar = carService.createCar(carReq);
         return new ResponseEntity<>(createdCar, HttpStatus.CREATED);
     }
 
     @PutMapping("/{car_id}")
-    public ResponseEntity<CarDto> updateCar(@PathVariable("car_id") int carId,
-                                         @RequestBody CarDto carDto){
-        final CarDto updatedCar = carService.updateCar(carId, carDto);
-        if (updatedCar == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        else {
-            return new ResponseEntity<>(updatedCar, HttpStatus.OK);
-        }
+    public ResponseEntity<Car> updateCar(@PathVariable("car_id") int carId,
+                                         @RequestBody Car carReq){
+        final Car updatedCar = carService.updateCar(carId, carReq);
+        return new ResponseEntity<>(updatedCar, HttpStatus.OK);
     }
 
     @DeleteMapping("/{car_id}")
     public ResponseEntity<Void> deleteCar(@PathVariable("car_id") int carId){
-        final Car deletedCar = carService.deleteCar(carId);
-        if (deletedCar == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        else {
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
+        carService.deleteCar(carId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<List<Car>> listCars(){
         final List<Car> cars = carService.listCar();
         return new ResponseEntity<>(cars, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Car> getCarById(@PathVariable("id") int carId){
+        final Car car = carService.getCarById(carId);
+        return new ResponseEntity<>(car, HttpStatus.OK);
     }
 }
