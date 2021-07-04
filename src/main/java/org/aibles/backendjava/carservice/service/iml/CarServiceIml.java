@@ -1,8 +1,8 @@
 package org.aibles.backendjava.carservice.service.iml;
 
 
-import org.aibles.backendjava.carservice.Mapper.CarMapper;
-import org.aibles.backendjava.carservice.dto.CarDto;
+import org.aibles.backendjava.carservice.exception.CarNotFoundException;
+import org.aibles.backendjava.carservice.exception.TeacherNotFoundException;
 import org.aibles.backendjava.carservice.model.Car;
 import org.aibles.backendjava.carservice.repository.CarRepository;
 import org.aibles.backendjava.carservice.service.CarService;
@@ -15,24 +15,20 @@ import java.util.List;
 public class CarServiceIml implements CarService {
 
     private final CarRepository carRepository;
-    private final CarMapper carMapper;
 
     @Autowired
-    public CarServiceIml(CarRepository carRepository, CarMapper carMapper) {
+    public CarServiceIml(CarRepository carRepository) {
         this.carRepository = carRepository;
-        this.carMapper = carMapper;
     }
 
 
     @Override
-    public CarDto createCar(CarDto carDto) {
-        Car car = carMapper.convertToEntity(carDto);
-        return carMapper.convertToDto(carRepository.save(car));
+    public Car createCar(Car car) {
+        return carRepository.save(car);
     }
 
     @Override
-    public CarDto updateCar(int carId, CarDto carDto) {
-        Car carReq = convertToEntity(carDto);
+    public Car updateCar(int carId, Car carReq) {
         Car result = carRepository.findById(carId)
                 .map(car -> {
                     car.setName(carReq.getName());
@@ -40,18 +36,18 @@ public class CarServiceIml implements CarService {
                     return car;
                 })
                 .map(carRepository::save)
-                .orElse(null);
-        return convertToDTO(result);
+                .orElseThrow(CarNotFoundException::new);
+        return result;
     }
 
     @Override
-    public Car deleteCar(int carId) {
-        return carRepository.findById(carId)
+    public void deleteCar(int carId) {
+        carRepository.findById(carId)
                 .map(car -> {
                     carRepository.delete(car);
                     return car;
                 })
-                .orElse(null);
+                .orElseThrow(TeacherNotFoundException::new);
     }
 
     @Override
@@ -59,21 +55,9 @@ public class CarServiceIml implements CarService {
         return carRepository.findAll();
     }
 
-    private Car convertToEntity(CarDto carDto) {
-        Car car = new Car();
-        car.setId(carDto.getId());
-        car.setName(carDto.getName());
-        car.setColor(carDto.getColor());
-
-        return car;
-    }
-
-    private CarDto convertToDTO(Car car) {
-        CarDto carDto = new CarDto();
-        carDto.setId(car.getId());
-        carDto.setName(car.getName());
-        carDto.setColor(car.getColor());
-
-        return carDto;
+    @Override
+    public Car getCarById(int carId) {
+        return carRepository.findById(carId)
+                .orElseThrow(CarNotFoundException::new);
     }
 }
