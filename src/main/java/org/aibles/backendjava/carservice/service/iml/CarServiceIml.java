@@ -7,6 +7,8 @@ import org.aibles.backendjava.carservice.model.Car;
 import org.aibles.backendjava.carservice.repository.CarRepository;
 import org.aibles.backendjava.carservice.service.CarService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,11 +25,13 @@ public class CarServiceIml implements CarService {
 
 
     @Override
+    @Cacheable(value = "cars")
     public Car createCar(Car car) {
         return carRepository.save(car);
     }
 
     @Override
+    @Cacheable(value = "cars")
     public Car updateCar(int carId, Car carReq) {
         Car result = carRepository.findById(carId)
                 .map(car -> {
@@ -41,6 +45,7 @@ public class CarServiceIml implements CarService {
     }
 
     @Override
+    @CacheEvict(value = "cars")
     public void deleteCar(int carId) {
         carRepository.findById(carId)
                 .map(car -> {
